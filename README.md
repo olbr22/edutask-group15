@@ -11,6 +11,13 @@ Please keep the following in mind:
 * The system contains intended flaws, which are to be identified applying test techniques.
 * The system is a work-in-progress, meaning that some functionalities are not yet implemented. Focus on the functionalities that already exist, everything else can be disregarded for now.
 
+## Group 15
+
+Lab assignments on the *System Verification* course at Blekinge Tekniska Högskola must be completed in pairs. This is the lab repo for **Group 15**.
+
+Group 15 includes:
+- [Zachary Richard Mooney](https://github.com/Mooney91)
+
 ## Setup
 
 There are two ways to get the system running:
