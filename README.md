@@ -17,6 +17,7 @@ Lab assignments on the *System Verification* course at Blekinge Tekniska Högsko
 
 Group 15 includes:
 - [Zachary Richard Mooney](https://github.com/Mooney91)
+- [Olha Bruce](https://github.com/olbr22)
 
 ## Setup
 
