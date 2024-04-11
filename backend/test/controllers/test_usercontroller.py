@@ -1,7 +1,8 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 
 from src.controllers.usercontroller import UserController
+
 
 class TestUserControllerGetUserByEmail:
 
@@ -81,7 +82,7 @@ class TestUserControllerGetUserByEmail:
             uc.get_user_by_email(valid_email) #This context manager asserts that the code block within it raises an Exception. If the expected exception is not raised, the test will fail.
 
     @pytest.mark.usercontroller
-    def test_get_user_by_email_2(self, sut_multiple_user, capfd, valid_email):
+    def test_get_user_by_email_first_in_list_2(self, sut_multiple_user, valid_email):
         """
         Test case 2: Valid email associated to multiple users
         Email  associated with user: TRUE
@@ -92,10 +93,23 @@ class TestUserControllerGetUserByEmail:
         """
         # return the first one and print a warning message containing the email address
         user = sut_multiple_user.get_user_by_email(valid_email)
+        assert user == {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'}
+
+
+    @pytest.mark.usercontroller
+    def test_get_user_by_email_print_error_2(self, sut_multiple_user, capfd, valid_email):
+        """
+        Test case 2: Valid email associated to multiple users
+        Email  associated with user: TRUE
+        Multiple Users: TRUE
+        Email is Valid: TRUE
+        Database Operation Fails: FALSE
+        Outcome: User object (first in list); Print warning
+        """
+        # print a warning message containing the email address
+        sut_multiple_user.get_user_by_email(valid_email)
         # Check if the warning message is printed
         out, err = capfd.readouterr()
-
-        assert user == {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'}
         assert valid_email in out
 
     @pytest.mark.usercontroller
@@ -111,29 +125,71 @@ class TestUserControllerGetUserByEmail:
         with pytest.raises(ValueError):
             sut_single_user.get_user_by_email(invalid_email)
 
-    @pytest.mark.usercontroller
-    def test_get_user_by_email_4(self, sut_single_user, valid_email):
-        """
-        Test case 4: Valid email associated with one user
-        Email  associated with user: TRUE
-        Multiple Users: FALSE
-        Email is Valid: TRUE
-        Database Operation Fails: FALSE
-        Outcome: User object
-        """
-        user = sut_single_user.get_user_by_email(valid_email)
-        assert user == {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'}
+    # @pytest.mark.usercontroller
+    # def test_get_user_by_email_4(self, sut_single_user, valid_email):
+    #     """
+    #     Test case 4: Valid email associated with one user
+    #     Email  associated with user: TRUE
+    #     Multiple Users: FALSE
+    #     Email is Valid: TRUE
+    #     Database Operation Fails: FALSE
+    #     Outcome: User object
+    #     """
+    #     user = sut_single_user.get_user_by_email(valid_email)
+    #     assert user == {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'}
+
+    # @pytest.mark.usercontroller
+    # def test_get_user_by_email_5(self):
+    #     """
+    #     Test case 5: Valid email not associated with any user
+    #     Email  associated with user: FALSE
+    #     Multiple Users: FALSE
+    #     Email is Valid: TRUE
+    #     Database Operation Fails: FALSE
+    #     Outcome: None
+    #     """
+
+    #     # When we call the get_user_by_email method on the sut_single_user object
+    #     # we define that the .find method of the mocked DAO should return 
+    #     # list with this user [ {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'}]
+    #     # this is according to the fixture sut_single_user
+    #     # which is wrong, because according to the dao.find() docstring it returns a list of objects compliant to the given filter
+    #     # so it should return an empty list.
+    #     # This does not change the fact that the get_user_by_mail does not return the correct value
+    #     # but the assertion variable 'user' had wrong assertion value.
+    #     mocked_dao = MagicMock()
+    #     mocked_dao.find.return_value = []
+    #     uc = UserController(dao=mocked_dao)
+    #     user = uc.get_user_by_email('foo@bar.com')
+    #     assert user == None
+
+
+
+
+    @pytest.fixture
+    def sut(self, email: str):
+        email_ = {
+            'foo@bar.com': [],
+            'test@test.com' : [
+                {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'},
+                {'firstName': 'test2_first', 'lastName': 'test2_last', 'email': 'test@test.com'}
+            ],
+            'one@one.com' : [
+                {'firstName': 'test_one', 'lastName': 'test_one', 'email': 'one@one.com'},
+            ]
+        }
+        matched_users = email_[email]
+        mocked_dao = MagicMock()
+        mocked_dao.find.return_value = matched_users
+        uc = UserController(dao=mocked_dao)
+        return uc
 
     @pytest.mark.usercontroller
-    def test_get_user_by_email_5(self, sut_single_user, other_email):
-        """
-        Test case 5: Valid email not associated with any user
-        Email  associated with user: FALSE
-        Multiple Users: FALSE
-        Email is Valid: TRUE
-        Database Operation Fails: FALSE
-        Outcome: None
-        """
-        user = sut_single_user.get_user_by_email(other_email)
-        assert user == None
-        
+    @pytest.mark.parametrize('email, expected', [
+        ('foo@bar.com', None),
+        ('test@test.com', {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'}),
+        ('one@one.com', {'firstName': 'test_one', 'lastName': 'test_one', 'email': 'one@one.com'})
+        ])
+    def test_get_user_by_email(self, sut, email, expected):
+        result = sut.get_user_by_email(email=email)
+        assert result == expected
