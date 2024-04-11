@@ -4,14 +4,13 @@ from unittest.mock import patch, MagicMock
 from src.controllers.usercontroller import UserController
 
 class TestUserControllerGetUserByEmail:
-    
+
     @pytest.fixture
     def sut_single_user(self):
         """
         Fixture for creating a user controller with a mocked DAO configured to return a single user.
 
-        Returns:
-            UserController: An instance of UserController with a mocked DAO configured to return a single user.
+        Returns: UserController: An instance of UserController with a mocked DAO configured to return a single user.
         """
         matched_users = [
             {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'}
@@ -26,8 +25,7 @@ class TestUserControllerGetUserByEmail:
         """
         Fixture for creating a user controller with a mocked DAO configured to return multiple users.
 
-        Returns:
-            UserController: An instance of UserController with a mocked DAO configured to return multiple users.
+        Returns: UserController: An instance of UserController with a mocked DAO configured to return multiple users.
         """
         matched_users = [
             {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'},
@@ -43,8 +41,7 @@ class TestUserControllerGetUserByEmail:
         """
         Fixture for providing an invalid email address string.
 
-        Returns:
-            str: An invalid email address string.
+        Returns: str: An invalid email address string.
         """
         return "test.com"
 
@@ -53,8 +50,7 @@ class TestUserControllerGetUserByEmail:
         """
         Fixture for providing a valid email address string.
 
-        Returns:
-            str: A valid email address string.
+        Returns: str: A valid email address string.
         """
         return "test@test.com"
 
@@ -63,13 +59,12 @@ class TestUserControllerGetUserByEmail:
         """
         Fixture for providing another valid email address string.
 
-        Returns:
-            str: Another valid email address string.
+        Returns: str: Another valid email address string.
         """
         return "foo@bar.com"
 
     @pytest.mark.usercontroller
-    def test_get_user_by_email_1(self):
+    def test_get_user_by_email_1(self, valid_email):
         """
         Test case 1: Database fails
         Email associated with user: Not applicable
@@ -81,11 +76,9 @@ class TestUserControllerGetUserByEmail:
         mocked_dao = MagicMock()
         mocked_dao.find.side_effect = Exception() #This configures the find method of the mocked DAO to raise an Exception when called
         uc = UserController(dao=mocked_dao)
-        # patch the fullmatch method of the regex library
-        with patch('src.controllers.usercontroller.re.fullmatch', autospec=True) as mock_fullmatch: #This patches the re.fullmatch method from the re module used within the UserController class. It ensures that the fullmatch method is replaced with a mock object during the test.
-            mock_fullmatch.return_value = True
-            with pytest.raises(Exception):
-                uc.get_user_by_email({'email': 'email'}) #This context manager asserts that the code block within it raises an Exception. If the expected exception is not raised, the test will fail.
+
+        with pytest.raises(Exception):
+            uc.get_user_by_email(valid_email) #This context manager asserts that the code block within it raises an Exception. If the expected exception is not raised, the test will fail.
 
     @pytest.mark.usercontroller
     def test_get_user_by_email_2(self, sut_multiple_user, capfd, valid_email):
