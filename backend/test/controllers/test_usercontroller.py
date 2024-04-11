@@ -164,10 +164,18 @@ class TestUserControllerGetUserByEmail:
     #     assert user == None
 
 
-
-
     @pytest.fixture
     def sut(self, email: str):
+        """
+        Fixture function that creates and returns an instance of the UserController class.
+
+        Parameters:
+        - email (str): The email address used to retrieve list with users from the email_ dictionary.
+
+        Returns:
+        - uc (UserController): An instance of the UserController class with a mocked DAO object.
+
+        """
         email_ = {
             'foo@bar.com': [],
             'test@test.com' : [
@@ -180,6 +188,7 @@ class TestUserControllerGetUserByEmail:
         }
         matched_users = email_[email]
         mocked_dao = MagicMock()
+        # This configures the find method of the mocked DAO to return a list containing user objects
         mocked_dao.find.return_value = matched_users
         uc = UserController(dao=mocked_dao)
         return uc
