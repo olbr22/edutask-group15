@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 
 from src.controllers.usercontroller import UserController
 
-
 class TestUserControllerGetUserByEmail:
     @pytest.fixture
     def sut_single_user(self):
@@ -94,7 +93,6 @@ class TestUserControllerGetUserByEmail:
         user = sut_multiple_user.get_user_by_email(valid_email)
         assert user == {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'}
 
-
     @pytest.mark.usercontroller
     def test_get_user_by_email_print_error_2(self, sut_multiple_user, capfd, valid_email):
         """
@@ -138,7 +136,7 @@ class TestUserControllerGetUserByEmail:
         assert user == {'firstName': 'test1_first', 'lastName': 'test1_last', 'email': 'test@test.com'}
 
     @pytest.mark.usercontroller
-    def test_get_user_by_email_5(self):
+    def test_get_user_by_email_5(self, other_email):
         """
         Test case 5: Valid email not associated with any user
         Email  associated with user: FALSE
@@ -147,13 +145,11 @@ class TestUserControllerGetUserByEmail:
         Database Operation Fails: FALSE
         Outcome: None
         """
-
         mocked_dao = MagicMock()
         mocked_dao.find.return_value = []
         uc = UserController(dao=mocked_dao)
-        user = uc.get_user_by_email('foo@bar.com')
+        user = uc.get_user_by_email(other_email)
         assert user == None
-
 
     # @pytest.fixture
     # def sut(self, email: str):
