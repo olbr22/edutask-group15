@@ -5,6 +5,9 @@ from pymongo import MongoClient
 from src.util.dao import DAO
 
 class TestCreate:
+    """
+    A test suite for the create() method of the DAO class.
+    """
 
     # @pytest.fixture
     # @patch('src.util.dao.getValidator', autospec=True)
@@ -33,6 +36,12 @@ class TestCreate:
 
     @pytest.fixture
     def sut(self):
+        """
+        System Under Test (SUT).
+
+        Returns: DAO: An instance of the DAO class with mocked getValidation.
+        """
+
         test_json = {
             "$jsonSchema": {
                 "bsonType": "object",
@@ -46,8 +55,8 @@ class TestCreate:
             }
         }
 
-        with patch('src.util.dao.getValidator', autospec=True) as mocked_getValidator:
-            mocked_getValidator.return_value = test_json
+        with patch('src.util.dao.getValidator', autospec=True) as mockedgetValidator:
+            mockedgetValidator.return_value = test_json
 
             sut = DAO("test")
             
@@ -60,6 +69,13 @@ class TestCreate:
 
     @pytest.mark.dao
     def test_create(self, sut):
+        """
+        Test case for the create method of the DAO class.
+
+        Parameters: sut (DAO): The System Under Test (SUT) instance.
+
+        Assertion: Asserts that the result from the create() method is true
+        """
 
         myData = {
             "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
