@@ -142,37 +142,99 @@ class TestCreate:
         #     "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         # }
 
-        myData = {
+        data = {
             "firstName": "Joe",
             "lastName": "Bloggs",
             "email": "joe.bloggs@test.com"
         }
 
-        result = sut.create(myData)
+        result = sut.create(data)
 
         print(result)
 
         assert result
 
     @pytest.mark.dao
-    def test_create_1(self, sut):
+    def test_create_1_id(self, sut):
         """
         Test case 1: Required properties, BSON compliance, and flagged with uniqueItems.
         Required Properties: TRUE
         Comply with BSON: TRUE
         Flagged with uniqueItems: TRUE
         Outcome: JSON Object returned with data: dict and _id.
+
+        Testing for an _id attribute
         """
+        # data = {
+        #     "firstName": "Joe",
+        #     "lastName": "Bloggs",
+        #     "email": ["joe.bloggs@test.com", "jonathan.bloggs@test.com"]
+        # }
+
+        # data = {
+        #     "firstName": "Joe",
+        #     "lastName": "Bloggs",
+        #     "email": "joe.bloggs@test.com"
+        # }
+
         myData = {
             "firstName": "Joe",
             "lastName": "Bloggs",
-            "email": "joe.bloggs@test.com"
+            "email": "test11@test.com"
         }
 
-        result = sut.create(myData)
+        sut.create(myData)
+
+        newData = {
+            "firstName": "Joe",
+            "lastName": "Bloggs",
+            "email": "test12@test.com"
+        }
+    
+        result = sut.create(newData)
+
+        assert "_id" in result
+
+    @pytest.mark.dao
+    def test_create_1_json(self, sut):
+        """
+        Test case 1: Required properties, BSON compliance, and flagged with uniqueItems.
+        Required Properties: TRUE
+        Comply with BSON: TRUE
+        Flagged with uniqueItems: TRUE
+        Outcome: JSON Object returned with data: dict and _id.
+
+        Testing for a JSON Object (Dict in Python)
+        """
+        # data = {
+        #     "firstName": "Joe",
+        #     "lastName": "Bloggs",
+        #     "email": ["joe.bloggs@test.com", "jonathan.bloggs@test.com"]
+        # }
+
+        # data = {
+        #     "firstName": "Joe",
+        #     "lastName": "Bloggs",
+        #     "email": "joe.bloggs@test.com"
+        # }
+
+        myData = {
+            "firstName": "Joe",
+            "lastName": "Bloggs",
+            "email": "test13@test.com"
+        }
+
+        sut.create(myData)
+
+        newData = {
+            "firstName": "Joe",
+            "lastName": "Bloggs",
+            "email": "test14@test.com"
+        }
+
+        result = sut.create(newData)
 
         assert isinstance(result, dict)
-        assert "_id" in result
 
     @pytest.mark.dao
     def test_create_2(self, sut):
@@ -187,16 +249,22 @@ class TestCreate:
         myData = {
             "firstName": "Joe",
             "lastName": "Bloggs",
-            "email": "j.bloggs@test.com"
+            "email": "test2@test.com"
         }
 
         sut.create(myData)
 
         newData = {
-            "firstName": "Jonathan",
-            "lastName": "Blogs",
-            "email": "j.bloggs@test.com"
+            "firstName": "Joe",
+            "lastName": "Bloggs",
+            "email": "test2@test.com"
         }
+
+        # data = {
+        #     "firstName": "Joe",
+        #     "lastName": "Bloggs",
+        #     "email": ["joe.bloggs@test.com", "joe.bloggs@test.com"]
+        # }
 
         with pytest.raises(WriteError):
             sut.create(newData)
@@ -210,20 +278,24 @@ class TestCreate:
         Flagged with uniqueItems: FALSE
         Outcome: WriteError.
         """
-
         myData = {
             "firstName": "Joe",
             "lastName": "Bloggs",
-            "email": "j.bloggs@test.com"
+            "email": "test3@test.com"
         }
 
         sut.create(myData)
 
         newData = {
             "firstName": "Jonathan",
-            "lastName": "Blogs",
-            "email": (1, 2, 3)
+            "lastName": (1, 2, 3),
+            "email": "test3@test.com"
         }
+        # data = {
+        #     "firstName": "Jonathan",
+        #     "lastName": (1, 2, 3),
+        #     "email": ["joe.bloggs@test.com", "joe.bloggs@test.com"]
+        # }
 
         with pytest.raises(WriteError):
             sut.create(newData)
@@ -237,15 +309,27 @@ class TestCreate:
         Flagged with uniqueItems: TRUE
         Outcome: WriteError.
         """
-
         myData = {
             "firstName": "Joe",
             "lastName": "Bloggs",
-            "email": (1, 2, 3)
+            "email": "test41@test.com"
         }
 
+        sut.create(myData)
+
+        newData = {
+            "firstName": "Jonathan",
+            "lastName": (1, 2, 3),
+            "email": "test42@test.com"
+        }
+        # data = {
+        #     "firstName": "Joe",
+        #     "lastName": (1, 2, 3),
+        #     "email": ["joe.bloggs@test.com", "jonathan.bloggs@test.com"]
+        # }
+
         with pytest.raises(WriteError):
-            sut.create(myData)
+            sut.create(newData)
 
     @pytest.mark.dao
     def test_create_5(self, sut):
@@ -257,13 +341,26 @@ class TestCreate:
         Outcome: WriteError.
         """
 
-        data = {
+        myData = {
             "firstName": "Joe",
-            "email": "joe.bloggs@test.com"
+            "lastName": "Bloggs",
+            "email": "test51@test.com"
         }
 
+        sut.create(myData)
+
+        newData = {
+            "firstName": "Joe",
+            "email": "test52@test.com"
+        }
+
+        # data = {
+        #     "firstName": "Joe",
+        #     "email": ["joe.bloggs@test.com", "jonathan.bloggs@test.com"]
+        # }
+
         with pytest.raises(WriteError):
-            sut.create(data)
+            sut.create(newData)
 
     @pytest.mark.dao
     def test_create_6(self, sut):
@@ -274,18 +371,22 @@ class TestCreate:
         Flagged with uniqueItems: FALSE
         Outcome: WriteError.
         """
+        # data = {
+        #     "firstName": "Jonathan",
+        #     "email": ["joe.bloggs@test.com", "joe.bloggs@test.com"]
+        # }
 
-        data = {
+        myData = {
             "firstName": "Joe",
             "lastName": "Bloggs",
-            "email": "joe.bloggs@test.com"
+            "email": "test6@test.com"
         }
 
-        sut.create(data)
+        sut.create(myData)
 
         newData = {
-            "firstName": "Jonathan",
-            "email": "joe.bloggs@test.com"
+            "firstName": "Joe",
+            "email": "test6@test.com"
         }
 
         with pytest.raises(WriteError):
@@ -301,13 +402,26 @@ class TestCreate:
         Outcome: WriteError.
         """
 
+        # myData = {
+        #     "firstName": (1, 2, 3),
+        #     "email": ["joe.bloggs@test.com", "jonathan.bloggs@test.com"]
+        # }
+
         myData = {
             "firstName": "Joe",
-            "email": (1, 2, 3)
+            "lastName": "Bloggs",
+            "email": "test71@test.com"
+        }
+
+        sut.create(myData)
+
+        newData = {
+            "firstName": (1,2,3),
+            "email": "test72@test.com"
         }
 
         with pytest.raises(WriteError):
-            sut.create(myData)
+            sut.create(newData)
 
     @pytest.mark.dao
     def test_create_8(self, sut):
@@ -322,15 +436,19 @@ class TestCreate:
         myData = {
             "firstName": "Joe",
             "lastName": "Bloggs",
-            "email": "j.bloggs@test.com"
+            "email": "test8@test.com"
         }
 
         sut.create(myData)
 
         newData = {
-            "lastName": (1,2,3),
-            "email": "j.bloggs@test.com"
+            "firstName": (1,2,3),
+            "email": "test8@test.com"
         }
+        # data = {
+        #     "lastName": (1,2,3),
+        #     "email": ["joe.bloggs@test.com", "joe.bloggs@test.com"]
+        # }
 
         with pytest.raises(WriteError):
             sut.create(newData)
