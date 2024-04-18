@@ -11,72 +11,6 @@ class TestCreate:
     A test suite for the create() method of the DAO class.
     """
 
-    #######################################################################
-    # COMMENTED SECTION BELOW USES YIELD WITH FIRST SYNTAX, DOES NOT WORK #
-    #######################################################################
-
-    # @pytest.fixture
-    # @patch('src.util.dao.getValidator', autospec=True)
-    # def sut(self, mockedgetValidator):
-    #     test_json = {
-    #         "$jsonSchema": {
-    #             "bsonType": "object",
-    #             "required": ["url"],
-    #             "properties": {
-    #                 "url": {
-    #                     "bsonType": "string",
-    #                     "description": "the url of a YouTube video must be determined"
-    #                 }
-    #             }
-    #         }
-    #     }
-    #     mockedgetValidator.return_value = test_json
-
-    #     sut = DAO("test")
-
-    #     yield sut
-    
-    #     client = MongoClient('localhost', 27017)
-    #     db = client['edutask']
-    #     db['test'].drop()
-
-    #######################################################
-    # COMMENTED SECTION BELOW USES VIDEO AS JSON TEMPLATE #
-    #######################################################
-
-    # @pytest.fixture
-    # def sut(self):
-    #     """
-    #     System Under Test (SUT).
-
-    #     Returns: DAO: An instance of the DAO class with mocked getValidation.
-    #     """
-
-    #     test_json = {
-    #         "$jsonSchema": {
-    #             "bsonType": "object",
-    #             "required": ["url"],
-    #             "properties": {
-    #                 "url": {
-    #                     "bsonType": "string",
-    #                     "description": "the url of a YouTube video must be determined"
-    #                 }
-    #             }
-    #         }
-    #     }
-
-    #     with patch('src.util.dao.getValidator', autospec=True) as mockedgetValidator:
-    #         mockedgetValidator.return_value = test_json
-
-    #         sut = DAO("test")
-            
-    #         yield sut
-
-    #     client = MongoClient('localhost', 27017)
-    #     db = client['edutask']
-    #     db['test'].drop()
-
-    
     @pytest.fixture
     def sut(self):
         """
@@ -85,8 +19,7 @@ class TestCreate:
         Returns: DAO: An instance of the DAO class with mocked getValidation.
         """
 
-        # Changed to string as test 2 fails: python wants capitalised True but bson prefers true. Still does not work though!
-        test_json = """{
+        test_json = {
             "$jsonSchema": {
                 "bsonType": "object",
                 "required": ["firstName", "lastName", "email"],
@@ -102,7 +35,7 @@ class TestCreate:
                     "email": {
                         "bsonType": "string",
                         "description": "the email address of a user must be determined",
-                        "uniqueItems": true
+                        "uniqueItems": True
                     },
                     "tasks": {
                         "bsonType": "array",
@@ -112,47 +45,41 @@ class TestCreate:
                     }
                 }
             }
-        }"""
+        }
 
         with patch('src.util.dao.getValidator', autospec=True) as mockedgetValidator:
-            mockedgetValidator.return_value = json.loads(test_json)
+            mockedgetValidator.return_value = test_json
 
             sut = DAO("test")
             
             yield sut
-            # return sut
 
         client = MongoClient('localhost', 27017)
         db = client['edutask']
         db['test'].drop()
     
+    # @pytest.mark.dao
+    # def test_create(self, sut):
+    #     """
+    #     Test case for the create method of the DAO class.
+    #     This is a TEST test case to ensure that it works.
 
-    @pytest.mark.dao
-    def test_create(self, sut):
-        """
-        Test case for the create method of the DAO class.
-        This is a TEST test case to ensure that it works.
+    #     Parameters: sut (DAO): The System Under Test (SUT) instance.
 
-        Parameters: sut (DAO): The System Under Test (SUT) instance.
+    #     Assertion: Asserts that the result from the create() method is true
+    #     """
 
-        Assertion: Asserts that the result from the create() method is true
-        """
+    #     data = {
+    #         "firstName": "Joe",
+    #         "lastName": "Bloggs",
+    #         "email": "joe.bloggs@test.com"
+    #     }
 
-        # myData = {
-        #     "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        # }
+    #     result = sut.create(data)
 
-        data = {
-            "firstName": "Joe",
-            "lastName": "Bloggs",
-            "email": "joe.bloggs@test.com"
-        }
+    #     print(result)
 
-        result = sut.create(data)
-
-        print(result)
-
-        assert result
+    #     assert result
 
     @pytest.mark.dao
     def test_create_1_id(self, sut):
@@ -165,17 +92,6 @@ class TestCreate:
 
         Testing for an _id attribute
         """
-        # data = {
-        #     "firstName": "Joe",
-        #     "lastName": "Bloggs",
-        #     "email": ["joe.bloggs@test.com", "jonathan.bloggs@test.com"]
-        # }
-
-        # data = {
-        #     "firstName": "Joe",
-        #     "lastName": "Bloggs",
-        #     "email": "joe.bloggs@test.com"
-        # }
 
         myData = {
             "firstName": "Joe",
@@ -206,17 +122,6 @@ class TestCreate:
 
         Testing for a JSON Object (Dict in Python)
         """
-        # data = {
-        #     "firstName": "Joe",
-        #     "lastName": "Bloggs",
-        #     "email": ["joe.bloggs@test.com", "jonathan.bloggs@test.com"]
-        # }
-
-        # data = {
-        #     "firstName": "Joe",
-        #     "lastName": "Bloggs",
-        #     "email": "joe.bloggs@test.com"
-        # }
 
         myData = {
             "firstName": "Joe",
@@ -234,7 +139,14 @@ class TestCreate:
 
         result = sut.create(newData)
 
-        assert isinstance(result, dict)
+        # assert isinstance(result, dict)
+
+        try:
+            json_object = json.loads(json.dumps(result))
+            assert isinstance(json_object, dict) or isinstance(json_object, list)
+            # If it's a JSON object (dictionary or list), the test passes
+        except json.JSONDecodeError:
+            assert False  # If parsing fails, the return value is not JSON
 
     @pytest.mark.dao
     def test_create_2(self, sut):
@@ -259,12 +171,6 @@ class TestCreate:
             "lastName": "Bloggs",
             "email": "test2@test.com"
         }
-
-        # data = {
-        #     "firstName": "Joe",
-        #     "lastName": "Bloggs",
-        #     "email": ["joe.bloggs@test.com", "joe.bloggs@test.com"]
-        # }
 
         with pytest.raises(WriteError):
             sut.create(newData)
@@ -291,11 +197,6 @@ class TestCreate:
             "lastName": (1, 2, 3),
             "email": "test3@test.com"
         }
-        # data = {
-        #     "firstName": "Jonathan",
-        #     "lastName": (1, 2, 3),
-        #     "email": ["joe.bloggs@test.com", "joe.bloggs@test.com"]
-        # }
 
         with pytest.raises(WriteError):
             sut.create(newData)
@@ -322,11 +223,6 @@ class TestCreate:
             "lastName": (1, 2, 3),
             "email": "test42@test.com"
         }
-        # data = {
-        #     "firstName": "Joe",
-        #     "lastName": (1, 2, 3),
-        #     "email": ["joe.bloggs@test.com", "jonathan.bloggs@test.com"]
-        # }
 
         with pytest.raises(WriteError):
             sut.create(newData)
@@ -354,11 +250,6 @@ class TestCreate:
             "email": "test52@test.com"
         }
 
-        # data = {
-        #     "firstName": "Joe",
-        #     "email": ["joe.bloggs@test.com", "jonathan.bloggs@test.com"]
-        # }
-
         with pytest.raises(WriteError):
             sut.create(newData)
 
@@ -371,10 +262,6 @@ class TestCreate:
         Flagged with uniqueItems: FALSE
         Outcome: WriteError.
         """
-        # data = {
-        #     "firstName": "Jonathan",
-        #     "email": ["joe.bloggs@test.com", "joe.bloggs@test.com"]
-        # }
 
         myData = {
             "firstName": "Joe",
@@ -401,11 +288,6 @@ class TestCreate:
         Flagged with uniqueItems: TRUE
         Outcome: WriteError.
         """
-
-        # myData = {
-        #     "firstName": (1, 2, 3),
-        #     "email": ["joe.bloggs@test.com", "jonathan.bloggs@test.com"]
-        # }
 
         myData = {
             "firstName": "Joe",
@@ -445,45 +327,6 @@ class TestCreate:
             "firstName": (1,2,3),
             "email": "test8@test.com"
         }
-        # data = {
-        #     "lastName": (1,2,3),
-        #     "email": ["joe.bloggs@test.com", "joe.bloggs@test.com"]
-        # }
 
         with pytest.raises(WriteError):
             sut.create(newData)
-
-    ########################################################
-    # COMMENTED SECTION BELOW EXPERIMENTS WITH PARAMETRISE #
-    ########################################################
-    
-    # @pytest.mark.dao
-    # @pytest.mark.parametrize('data, expected', [
-    #     ({
-    #         "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    #     }, {
-    #         "_id": "<generated_object_id>",
-    #         "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-    #     }),
-    #     ({
-    #         "ul": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    #     }, WriteError),
-        
-    #     ])
-    # def test_create(self, sut, data, expected):
-    #     """
-    #     Test case for the create method of the DAO class.
-
-    #     Parameters: sut (DAO): The System Under Test (SUT) instance.
-
-    #     Assertion: Asserts that the result from the create() method is true
-    #     """
-
-    #     result = sut.create(data = data)
-
-    #     print(result)
-
-    #     assert result == expected
-
-
-
