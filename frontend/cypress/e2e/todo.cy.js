@@ -46,6 +46,8 @@ describe('add a new to-do item', () => {
         cy.get('form')
             .submit()
         // Should now be successfully logged in
+        
+        cy.get('.title-overlay').click()
     })
 
     it('login to the system with an existing account', () => {
