@@ -64,7 +64,7 @@ describe('Add a new task', () => {
             .should('be.disabled')
     })
 
-    it('create a task', () => {
+    it('confirm creating of a to-do item', () => {
         // select the title input field and type in a title
         cy.get('input[name=title]')
             .type('Watch before Monday')
@@ -75,6 +75,10 @@ describe('Add a new task', () => {
         // submit the form
         cy.get('form')
             .submit()
+
+        // confirm that the task has been added
+        cy.get('.container .container-element a .title-overlay')
+            .should('contain.text', 'Watch before Monday')
     })
 
     after(function () {
