@@ -1,4 +1,4 @@
-describe('add a new to-do item', () => {
+describe('Test: todo', () => {
     // define variables that we need on multiple occasions
     let uid // user id
     let name // name of the user (firstName + ' ' + lastName)
@@ -47,13 +47,49 @@ describe('add a new to-do item', () => {
             .submit()
         // Should now be successfully logged in
         
+        //Click on Task
         cy.get('.title-overlay').click()
     })
 
-    it('login to the system with an existing account', () => {
-        // assert that the user is now logged in
-        cy.get('h1')
-            .should('contain.text', 'Your tasks, ' + name)
+    it('1.1: Confirm the Title input is empty.', () => {
+        cy.get('input[type=text]')
+            .should('be.empty')
+    })
+
+    it('2.1: Confirm "Create new Task" button is disabled.', () => {
+        cy.get('input[type=submit]')
+            .should('be.disabled')
+    })
+
+    it('2.2: Add new to-do item.', () => {
+        cy.get('input[type=text]')
+            .type('Watch this week')
+        cy.get('input[type=submit]').click()
+
+        cy.get('span.editable')
+            .contains('Watch this week')
+            .should('be.visible');
+    })
+
+    it('3.1: Icon in front of todo is clicked when it was active', () => {
+        cy.get('.checker.unchecked').click()
+
+        cy.get('.checker.checked').should('exist');
+        cy.get('.editable').should('have.css', 'text-decoration', 'line-through');
+    })
+
+    it('3.2: Icon in front of todo is clicked when it was done', () => {
+        cy.get('.checker.unchecked').click()
+        cy.get('.checker.checked').click()
+
+        cy.get('.checker.unchecked').should('exist');
+        cy.get('.editable').should('have.css', 'text-decoration', 'none');
+    })
+
+    it('4.1: Confirm that todo item is removed when deleted.', () => {
+        cy.get('.remover').click()
+        cy.contains('div', 'watch video')
+            .should('not.exist')
     })
 
     after(function () {
