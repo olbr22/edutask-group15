@@ -35,8 +35,10 @@ describe('Add a new task', () => {
         // create a fabricated task
         let task = {
             "title": "Test Title",
-            "url": "dQw4w9WgXcQ",
-            "userid": uid
+            "description": "Popular Song",
+            "url": "v=dQw4w9WgXcQ",
+            "userid": uid,
+            "todos": "watch video"
         }
         cy.request({
             method: 'POST',
