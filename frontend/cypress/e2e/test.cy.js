@@ -36,7 +36,9 @@ describe('Add a new task', () => {
         let task = {
             "title": "Test Title",
             "url": "dQw4w9WgXcQ",
-            "userid": uid
+            "userid": uid,
+            "todo": "Test Todo",
+            "description": "Test Description",
         }
         cy.request({
             method: 'POST',
