@@ -32,26 +32,58 @@ describe('Add a new task', () => {
         cy.get('form')
             .submit()
 
-        // create a fabricated task
-        let task = {
-            "title": "Test Title",
-            "description": "Popular Song",
-            "url": "v=dQw4w9WgXcQ",
-            "userid": uid,
-            "todos": "watch video"
-        }
+        // // Create a task for the user
+        // cy.request({
+        //     method: 'POST',
+        //     url: 'http://localhost:5000/tasks/create',
+        //     form: true,
+        //     body: {
+        //         "title": "Title title",
+        //         "description": "Popular Song",
+        //         "url": "v=dQw4w9WgXcQ",
+        //         "userid": uid,
+        //         "todos": "watch video"
+        //     }
+        // }).then((response) => {
+        //     cy.log(response.body)
+        // })
+    })
+
+    it('confirm current page is "Your tasks" page', () => {
+        cy.get('h1')
+            .should('contain.text', 'Your tasks, ' + name)
+    })
+
+    it('confirm the title input is empty', () => {
+        cy.get('input[name=title]')
+            .should('be.empty')
+    })
+
+    it('confirm "Create new Task" btn is disabled', () => {
+        cy.get('input[type=submit]')
+            .should('be.disabled')
+    })
+
+    it('create a task', () => {
+        // select the title input field and type in a title
+        cy.get('input[name=title]')
+            .type('Watch before Monday')
+        // select url and type in a url
+        cy.get('input[name=url]')
+            .type('dQw4w9WgXcQ')
+
+        // submit the form
+        cy.get('form')
+            .submit()
+    })
+
+    after(function () {
+        // clean up by deleting the user from the database
         cy.request({
-            method: 'POST',
-            url: 'http://localhost:5000/tasks/create',
-            form: true,
-            body: task
+            method: 'DELETE',
+            url: `http://localhost:5000/users/${uid}`
         }).then((response) => {
             cy.log(response.body)
         })
-    })
-
-    it('confirm current page is task page', () => {
-        cy.get('h1')
-            .should('contain.text', 'Your tasks, ' + name)
     })
 })
