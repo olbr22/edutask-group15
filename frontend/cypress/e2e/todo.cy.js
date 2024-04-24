@@ -52,42 +52,93 @@ describe('Test: todo', () => {
     })
 
     it('1.1: Confirm the Title input is empty.', () => {
-        cy.get('input[type=text]')
+        cy.get('.popup input[type=text]')
             .should('be.empty')
     })
 
     it('2.1: Confirm "Create new Task" button is disabled.', () => {
-        cy.get('input[type=submit]')
+        cy.get('.popup input[type=submit]')
             .should('be.disabled')
     })
 
-    it('2.2: Add new to-do item.', () => {
-        cy.get('input[type=text]')
-            .type('Watch this week')
-        cy.get('input[type=submit]').click()
+    // it('2.2: Add new to-do item.', () => {
+    //     cy.get('input[type=text]')
+    //         .type('Watch this week')
+    //     cy.get('input[type=submit]').click()
 
-        cy.get('span.editable')
-            .contains('Watch this week')
-            .should('be.visible');
+    //     cy.get('span.editable')
+    //         .contains('Watch this week')
+    //         .should('be.visible');
+    // })
+
+    it('2.2: Confirm "Add" button is enabled when "Add a new todo" item is not empty', () => {
+        cy.get('.inline-form input[type=text]')
+            .type('Watch this video later')
+        cy.get('input[type=submit]')
+            .should('be.enabled')
+    })
+
+    it('2.3: Confirm new (active) to-do item with the given description is appended to the bottom of the list of existing to-do items', () => {
+        cy.get('.inline-form input[type=text]')
+            .type('Watch this video later')
+        cy.get('.inline-form input[type=submit]')
+            .click()
+        cy.get('li.todo-item .editable')
+            .last()
+            .contains('Watch this video later')
+            .should('be.visible')
     })
 
     it('3.1: Icon in front of todo is clicked when it was active', () => {
-        cy.get('.checker.unchecked').click()
+        cy.get('li.todo-item span.checker.unchecked').first().click()
 
-        cy.get('.checker.checked').should('exist');
-        cy.get('.editable').should('have.css', 'text-decoration', 'line-through');
+        cy.get('li.todo-item span.checker.checked').first().should('exist');
+        // cy.get('li.todo-item span.editable').first().should('have.css', 'text-decoration', 'line-through');
+
+        cy.get('li.todo-item span.editable').first().should(($element) => {
+            const textDecoration = $element.css('text-decoration')
+            expect(textDecoration).to.include('line-through')
+        })
     })
+
+    // it('3.1: Icon in front of todo is clicked when it was active', () => {
+    //     cy.get('.checker.unchecked').first().click()
+
+    //     cy.get('.checker.checked').first().should('exist');
+    //     cy.get('.editable').first().should('have.css', 'text-decoration', 'line-through');
+    // })
+
+    // it('3.1: Icon in front of todo is clicked when it was active', () => {
+    //     // cy.get('.inline-form input[type=text]')
+    //     //     .type('Watch this video later')
+    //     // cy.get('.inline-form input[type=submit]')
+    //     //     .click()
+
+    //     cy.get('li.todo-item span.checker.unchecked')
+    //         .click()
+    //     cy.get('li.todo-item span.editable')
+    //         .should(($element) => {
+    //         const textDecoration = $element.css('text-decoration')
+    //         expect(textDecoration).to.include('line-through')
+    //         })
+    //     cy.get('li.todo-item span.checker.checked').should('exist');
+    // })
 
     it('3.2: Icon in front of todo is clicked when it was done', () => {
         cy.get('.checker.unchecked').click()
         cy.get('.checker.checked').click()
 
         cy.get('.checker.unchecked').should('exist');
-        cy.get('.editable').should('have.css', 'text-decoration', 'none');
+        // cy.get('.editable').should('have.css', 'text-decoration', 'none');
+
+        cy.get('li.todo-item span.editable').first().should(($element) => {
+            const textDecoration = $element.css('text-decoration')
+            expect(textDecoration).to.include('none')
+        })
     })
 
     it('4.1: Confirm that todo item is removed when deleted.', () => {
-        cy.get('.remover').click()
+        cy.get('.remover').first().click()
         cy.contains('div', 'watch video')
             .should('not.exist')
     })
