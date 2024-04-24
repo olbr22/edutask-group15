@@ -51,6 +51,8 @@ describe('Add a new task', () => {
         cy.get('.title-overlay').last().click()
     })
 
+    /* Use Case ID R8UC1 */
+
     it('1.1: Confirm "Add a new todo" item is empty', () => {
         cy.get('input[type=text]')
             .should('be.empty')
@@ -74,7 +76,13 @@ describe('Add a new task', () => {
             .type('Watch this video later')
         cy.get('.inline-form input[type=submit]')
             .click()
+        cy.get('li.todo-item .editable')
+            .last()
+            .contains('Watch this video later')
+            .should('be.visible')
     })
+
+    /* Use Case ID R8UC2 */
 
     after(function () {
         // clean up by deleting the user from the database
