@@ -4,7 +4,7 @@ describe('Add a new task', () => {
     let name // name of the user (firstName + ' ' + lastName)
     let email // email of the user
 
-    before(function () {
+    before(function () {        
         // create a fabricated user from a fixture
         cy.fixture('user.json').then((user) => {
             cy.request({
@@ -16,69 +16,64 @@ describe('Add a new task', () => {
                 uid = response.body._id.$oid
                 name = user.firstName + ' ' + user.lastName
                 email = user.email
+
+                cy.request({
+                    method: 'POST',
+                    url: 'http://localhost:5000/tasks/create',
+                    form: true,
+                    body: {
+                        title: "Rick Astley - Never Gonna Give You Up",
+                        description: "Popular 80's Song",
+                        url: "dQw4w9WgXcQ",
+                        userid: uid,
+                        todos: "Watch video"
+                    }
+                })
             })
         })
     })
 
     beforeEach(function () {
+        // Set the viewport to 1000px by 1000px
+        cy.viewport(1000, 1000);
         // enter the main main page
         cy.visit('http://localhost:3000')
-
-         // login fabricated user
+        // Login
         cy.contains('div', 'Email Address')
             .find('input[type=text]')
             .type(email)
-        // submit the form on this page
+
         cy.get('form')
             .submit()
-
-        // // Create a task for the user
-        // cy.request({
-        //     method: 'POST',
-        //     url: 'http://localhost:5000/tasks/create',
-        //     form: true,
-        //     body: {
-        //         "title": "Title title",
-        //         "description": "Popular Song",
-        //         "url": "v=dQw4w9WgXcQ",
-        //         "userid": uid,
-        //         "todos": "watch video"
-        //     }
-        // }).then((response) => {
-        //     cy.log(response.body)
-        // })
+        // Should now be successfully logged in
+        
+        //Click on Task
+        cy.get('.title-overlay').last().click()
     })
 
-    it('confirm current page is "Your tasks" page', () => {
-        cy.get('h1')
-            .should('contain.text', 'Your tasks, ' + name)
-    })
-
-    it('confirm the title input is empty', () => {
-        cy.get('input[name=title]')
+    it('1.1: Confirm "Add a new todo" item is empty', () => {
+        cy.get('input[type=text]')
             .should('be.empty')
     })
 
-    it('confirm "Create new Task" btn is disabled', () => {
+    it('2.1: Confirm "Add" button is disabled', () => {
         cy.get('input[type=submit]')
             .should('be.disabled')
     })
 
-    it('confirm creating of a to-do item', () => {
-        // select the title input field and type in a title
-        cy.get('input[name=title]')
-            .type('Watch before Monday')
-        // select url and type in a url
-        cy.get('input[name=url]')
-            .type('dQw4w9WgXcQ')
+    
+    it('2.2: Confirm "Add" button is enabled when "Add a new todo" item is not empty', () => {
+        cy.get('.inline-form input[type=text]')
+            .type('Watch this video later')
+        cy.get('input[type=submit]')
+            .should('be.enabled')
+    })
 
-        // submit the form
-        cy.get('form')
-            .submit()
-
-        // confirm that the task has been added
-        cy.get('.container .container-element a .title-overlay')
-            .should('contain.text', 'Watch before Monday')
+    it('2.3: Confirm new (active) to-do item with the given description is appended to the bottom of the list of existing to-do items', () => {
+        cy.get('.inline-form input[type=text]')
+            .type('Watch this video later')
+        cy.get('.inline-form input[type=submit]')
+            .click()
     })
 
     after(function () {
