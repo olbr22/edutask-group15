@@ -56,7 +56,7 @@ describe('Test: todo', () => {
             .should('be.empty')
     })
 
-    it('2.1: Confirm "Create new Task" button is disabled.', () => {
+    it('2.1: Confirm "Add" button is disabled.', () => {
         cy.get('.popup input[type=submit]')
             .should('be.disabled')
     })
