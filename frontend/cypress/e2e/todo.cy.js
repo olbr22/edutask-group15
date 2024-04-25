@@ -77,6 +77,10 @@ describe('Test: todo', () => {
             .last()
             .contains('Watch this video later')
             .should('be.visible')
+            .should(($element) => {
+                const textDecoration = $element.css('text-decoration')
+                expect(textDecoration).to.include('none')
+            })
     })
 
     it('3.1: Icon in front of (active) todo is clicked and is set to "done". Toggled item is struck through.', () => {
