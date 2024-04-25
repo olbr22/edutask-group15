@@ -1,7 +1,6 @@
 describe('Test: todo', () => {
     // Define variables that we need on multiple occasions
     let uid // user id
-    let name // name of the user (firstName + ' ' + lastName)
     let email // email of the user
 
     before(function () {
@@ -14,7 +13,6 @@ describe('Test: todo', () => {
                 body: user
             }).then((response) => {
                 uid = response.body._id.$oid
-                name = user.firstName + ' ' + user.lastName
                 email = user.email
 
                 let data = {
