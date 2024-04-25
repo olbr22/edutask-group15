@@ -45,7 +45,6 @@ describe('Test: todo', () => {
 
         cy.get('form')
             .submit()
-            
         // Should now be successfully logged in
         
         // Click on Task
@@ -69,7 +68,7 @@ describe('Test: todo', () => {
             .should('be.enabled')
     })
 
-    it('2.3: Confirm new (active) todo item with the given description is appended to the bottom of the list of existing to-do items.', () => {
+    it('2.3: Confirm new (active) todo item with the given description is appended to the bottom of the list of existing todo items.', () => {
         cy.get('.inline-form input[type=text]')
             .type('Watch this video later')
         cy.get('.inline-form input[type=submit]')
@@ -80,7 +79,7 @@ describe('Test: todo', () => {
             .should('be.visible')
     })
 
-    it('3.1: Icon in front of (active) todo is clicked and is set to "done".', () => {
+    it('3.1: Icon in front of (active) todo is clicked and is set to "done". Toggled item is struck through.', () => {
         cy.get('li.todo-item span.checker.unchecked')
             .first()
             .click()
@@ -95,7 +94,7 @@ describe('Test: todo', () => {
             })
     })
 
-    it('3.2: Icon in front of (done) todo is clicked and is set to "active.', () => {
+    it('3.2: Icon in front of (done) todo is clicked and is set to "active". Toggled item is not struck through.', () => {
         cy.get('.checker.unchecked')
             .click()
         cy.get('.checker.checked')
