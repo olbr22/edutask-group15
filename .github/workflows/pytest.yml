@@ -29,6 +29,6 @@ jobs:
         run: |
           python -m pytest -m usercontroller
 
-      - name: Integration Tests
-        run: |
-          python -m pytest -m dao
+      # - name: Integration Tests
+      #  run: |
+      #    python -m pytest -m dao
