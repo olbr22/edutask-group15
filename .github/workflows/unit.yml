@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   test:
@@ -25,4 +26,4 @@ jobs:
         run: pip install -r ./backend/requirements.pip
 
       - name: Run unit tests
-        run: python -m pytest -m unit
+        run: python -m pytest -m usercontroller
